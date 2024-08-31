@@ -1,9 +1,9 @@
 import { InterestType, RepaymentFrequency, TermType } from '@prisma/client';
 import {
-  IsCurrency,
   IsDateString,
   IsEnum,
   IsInt,
+  IsISO4217CurrencyCode,
   IsNotEmpty,
   IsNumber,
   IsPositive,
@@ -11,8 +11,9 @@ import {
 } from 'class-validator';
 
 export class AddNewLoanDto {
-  @IsCurrency()
   @IsNotEmpty()
+  @IsString()
+  @IsISO4217CurrencyCode()
   currency: string;
 
   @IsPositive()
