@@ -19,20 +19,13 @@ enum InterestType {
 }
 
 enum RepaymentFrequency {
-  YEARLY
-  HALF_YEARLY
+  ANNUALLY
+  SEMI_ANNUALLY
   QUARTERLY
   MONTHLY
   BI_WEEKLY
   WEEKLY
   DAILY
-}
-
-enum TermType {
-  DAYS
-  WEEKS
-  MONTHS
-  YEARS
 }
 
 enum LoanStatus {
@@ -42,16 +35,32 @@ enum LoanStatus {
   CANCELLED
 }
 
-model Loan {
+model Loans {
   id                    Int                     @id @default(autoincrement())
   currency              String
   amount                Float
   interest_rate         Float
   interest_type         InterestType            @default(SIMPLE)
-  repayment_freqeuncy   RepaymentFrequency
-  term_type             TermType
+  repayment_frequency   RepaymentFrequency
   term                  Int
   lent_on               DateTime
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  status                LoanStatus?              @default(ACTIVE)
+  mark_for_deletion     Boolean?                 @default(false)
+  repayments            Repayments[]
+}
+
+model Repayments {
+  id                    Int                     @id @default(autoincrement())
+  loan                  Loans                   @relation(fields: [loan_id], references: [id])
+  loan_id               Int
+  currency              String
+  amount                Float
+  interest              Float
+  principal             Float
+  due_date              DateTime?                
+  payment_date          DateTime?
   created_at            DateTime                 @default(now())
   updated_at            DateTime                 @updatedAt
   status                LoanStatus?              @default(ACTIVE)

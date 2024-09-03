@@ -13,6 +13,7 @@ export class Response {
       code,
       message,
       error,
+      data: {},
     };
   }
 }

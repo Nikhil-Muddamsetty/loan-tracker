@@ -1,6 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { LoansService } from './loans.service';
 import {
+  AddNewCreditCardEmiLoanCustomDto,
+  AddNewCreditCardEmiLoanDto,
   AddNewLoanDto,
   DeleteLoanByLoanIdDto,
   GetLoanByIdDto,
@@ -35,6 +37,32 @@ export class LoansController {
       return this.loanService.addNewLoan(addNewLoanDto);
     } catch (error) {
       return Response.error('UHE-LOC-ANL', 'unhandled error', error);
+    }
+  }
+
+  @Post('credit-card-emi')
+  async addNewCreditCardEmiLoan(
+    @Body() addNewCreditCardEmiLoanDto: AddNewCreditCardEmiLoanDto,
+  ) {
+    try {
+      return this.loanService.addNewCreditCardEmiLoan(
+        addNewCreditCardEmiLoanDto,
+      );
+    } catch (error) {
+      return Response.error('UHE-LOC-ANCCEL', 'unhandled error', error);
+    }
+  }
+
+  @Post('credit-card-emi-custom')
+  async addNewCreditCardEmiCustomLoan(
+    @Body() addNewCreditCardEmiLoanCustomDto: AddNewCreditCardEmiLoanCustomDto,
+  ) {
+    try {
+      return this.loanService.addNewCreditCardEmiCustomLoan(
+        addNewCreditCardEmiLoanCustomDto,
+      );
+    } catch (error) {
+      return Response.error('UHE-LOC-ANCCECL', 'unhandled error', error);
     }
   }
 
