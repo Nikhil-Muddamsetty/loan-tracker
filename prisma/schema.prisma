@@ -35,6 +35,20 @@ enum LoanStatus {
   CANCELLED
 }
 
+model Users {
+  id                    Int                      @id @default(autoincrement())
+  first_name            String
+  last_name             String?
+  email                 String                   @unique
+  password              String
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  status                LoanStatus?              @default(ACTIVE)
+  mark_for_deletion     Boolean?                 @default(false)
+  lent                  Loans[]                  @relation("lender_id")
+  borrowed              Loans[]                  @relation("borrower_id")
+}
+
 model Loans {
   id                    Int                     @id @default(autoincrement())
   currency              String
@@ -49,6 +63,12 @@ model Loans {
   status                LoanStatus?              @default(ACTIVE)
   mark_for_deletion     Boolean?                 @default(false)
   repayments            Repayments[]
+  lender                Users                    @relation("lender_id",fields: [lender_id], references: [id])
+  lender_id             Int                      
+  borrower              Users?                   @relation("borrower_id",fields: [borrower_id], references: [id]) 
+  borrower_id           Int?            
+  borrower_email        String?                  
+  borrower_phone        String?
 }
 
 model Repayments {
@@ -56,6 +76,7 @@ model Repayments {
   loan                  Loans                   @relation(fields: [loan_id], references: [id])
   loan_id               Int
   currency              String
+  total_due             Float
   amount                Float
   interest              Float
   principal             Float
