@@ -1,4 +1,4 @@
-import { Injectable, Res } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   AddNewCreditCardEmiLoanCustomDto,
@@ -16,21 +16,21 @@ export class LoansService {
   ) {}
 
   async addNewLoan(addNewLoadDto: AddNewLoanDto) {
-    try {
-      const loan = await this.prisma.loans.create({
-        data: { ...addNewLoadDto },
-      });
-      if (!loan) {
-        return Response.error(
-          'LOS-ANL-1',
-          'Failed to add new loan to the database',
-        );
-      } else {
-        return Response.success('Loan added', null);
-      }
-    } catch (error) {
-      return Response.error('UHE-LOS-ANL', 'unhandled error', error);
-    }
+    // try {
+    //   const loan = await this.prisma.loans.create({
+    //     data: { ...addNewLoadDto },
+    //   });
+    //   if (!loan) {
+    //     return Response.error(
+    //       'LOS-ANL-1',
+    //       'Failed to add new loan to the database',
+    //     );
+    //   } else {
+    //     return Response.success('Loan added', null);
+    //   }
+    // } catch (error) {
+    //   return Response.error('UHE-LOS-ANL', 'unhandled error', error);
+    // }
   }
 
   async addNewCreditCardEmiLoan(
@@ -140,6 +140,12 @@ export class LoansService {
             amount: repayment.amount,
             due_date: repayment.due_date,
             status: 'ACTIVE',
+            total_due:
+              repayment.amount +
+              repayment.additional_charges_on_emis.reduce(
+                (total, additionCharges) => total + additionCharges.amount,
+                0,
+              ),
           };
         });
       return Response.success('Transaction payload generated', repaymentList);
@@ -159,9 +165,18 @@ export class LoansService {
         interest_type: addNewCreditCardEmiLoanCustomDto.interest_type,
         repayment_frequency:
           addNewCreditCardEmiLoanCustomDto.repayment_frequency,
-        term: addNewCreditCardEmiLoanCustomDto.term,
+        term: addNewCreditCardEmiLoanCustomDto.repayments.length,
         lent_on: addNewCreditCardEmiLoanCustomDto.lent_on,
+        lender_id: addNewCreditCardEmiLoanCustomDto.lender_id,
       };
+      if (addNewCreditCardEmiLoanCustomDto.borrower_id) {
+        loans['borrower_id'] = addNewCreditCardEmiLoanCustomDto.borrower_id;
+      } else {
+        loans['borrower_email'] =
+          addNewCreditCardEmiLoanCustomDto.borrower_email;
+        loans['borrower_phone'] =
+          addNewCreditCardEmiLoanCustomDto.borrower_phone;
+      }
       return Response.success('Loans payload generated', loans);
     } catch (error) {
       return Response.error('UHE-LOS-GLP', 'unhandled error', error);

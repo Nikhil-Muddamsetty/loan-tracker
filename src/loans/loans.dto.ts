@@ -8,6 +8,7 @@ import {
   IsISO4217CurrencyCode,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsPositive,
   IsString,
   Min,
@@ -175,10 +176,6 @@ export class AddNewCreditCardEmiLoanCustomDto {
   @IsEnum(RepaymentFrequency)
   repayment_frequency: RepaymentFrequency;
 
-  @IsInt()
-  @IsNotEmpty()
-  term: number;
-
   @IsDateString()
   @IsNotEmpty()
   lent_on: string;
@@ -187,6 +184,25 @@ export class AddNewCreditCardEmiLoanCustomDto {
   @ValidateNested({ each: true })
   @Type(() => RepaymentsType)
   repayments: RepaymentsType[];
+
+  @IsInt()
+  @IsNotEmpty()
+  lender_id: number;
+
+  @IsInt()
+  @IsOptional()
+  @IsNotEmpty()
+  borrower_id: number;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  borrower_email: string;
+
+  @IsString()
+  @IsOptional()
+  @IsNotEmpty()
+  borrower_phone: string;
 }
 
 export class GetLoanByIdDto {
