@@ -35,21 +35,63 @@ enum LoanStatus {
   CANCELLED
 }
 
-model Users {
-  id                    Int                      @id @default(autoincrement())
-  first_name            String
-  last_name             String?
-  email                 String                   @unique
-  password              String
-  created_at            DateTime                 @default(now())
-  updated_at            DateTime                 @updatedAt
-  status                LoanStatus?              @default(ACTIVE)
-  mark_for_deletion     Boolean?                 @default(false)
-  lent                  Loans[]                  @relation("lender_id")
-  borrowed              Loans[]                  @relation("borrower_id")
+enum AccountStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
 }
 
-model Loans {
+enum EmailForCommunication {
+  CUSTOM
+  GOOGLE
+}
+
+model User {
+  id                    Int                      @id @default(autoincrement())
+  first_name            String?
+  last_name             String?
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  status                AccountStatus?              @default(ACTIVE)
+  mark_for_deletion     Boolean?                 @default(false)
+  lent                  Loan[]                   @relation("lender_id")
+  borrowed              Loan[]                   @relation("borrower_id")
+  auth                  Auth?                  
+
+  @@map("users")
+}
+
+model Auth {
+  id                    Int                      @id @default(autoincrement())
+  user                  User                     @relation(fields: [user_id], references: [id])
+  user_id               Int                      @unique()
+  email                 EmailForCommunication    @unique @default(CUSTOM)
+  custom_email_id       String?
+  google_user_id        String?
+  google_email_id       String?
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  status                AccountStatus?           @default(ACTIVE)
+  mark_for_deletion     Boolean?                 @default(false)
+  sessions              Session[]
+  
+  @@map("auths")
+}
+
+model Session {
+  id                    Int                      @id @default(autoincrement())
+  auth                  Auth                     @relation(fields: [auth_id], references: [id])
+  auth_id               Int
+  jti                   String                   @unique
+  created_at            DateTime                 @default(now())
+  updated_at            DateTime                 @updatedAt
+  mark_for_deletion     Boolean?                 @default(false)
+
+  @@map("sessions")
+}
+
+model Loan {
   id                    Int                     @id @default(autoincrement())
   currency              String
   amount                Float
@@ -62,18 +104,20 @@ model Loans {
   updated_at            DateTime                 @updatedAt
   status                LoanStatus?              @default(ACTIVE)
   mark_for_deletion     Boolean?                 @default(false)
-  repayments            Repayments[]
-  lender                Users                    @relation("lender_id",fields: [lender_id], references: [id])
+  repayments            Repayment[]
+  lender                User                     @relation("lender_id",fields: [lender_id], references: [id])
   lender_id             Int                      
-  borrower              Users?                   @relation("borrower_id",fields: [borrower_id], references: [id]) 
+  borrower              User?                    @relation("borrower_id",fields: [borrower_id], references: [id]) 
   borrower_id           Int?            
   borrower_email        String?                  
   borrower_phone        String?
+
+   @@map("loans")
 }
 
-model Repayments {
+model Repayment {
   id                    Int                     @id @default(autoincrement())
-  loan                  Loans                   @relation(fields: [loan_id], references: [id])
+  loan                  Loan                    @relation(fields: [loan_id], references: [id])
   loan_id               Int
   currency              String
   total_due             Float
@@ -86,4 +130,6 @@ model Repayments {
   updated_at            DateTime                 @updatedAt
   status                LoanStatus?              @default(ACTIVE)
   mark_for_deletion     Boolean?                 @default(false)
+
+   @@map("repayments")
 }

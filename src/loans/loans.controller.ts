@@ -7,7 +7,7 @@ import {
   DeleteLoanByLoanIdDto,
   GetLoanByIdDto,
 } from './loans.dto';
-import { Response } from 'src/utils/response';
+import { Res } from 'src/utils/response';
 
 @Controller('loan')
 export class LoansController {
@@ -18,7 +18,7 @@ export class LoansController {
     try {
       return await this.loanService.getLoans();
     } catch (error) {
-      return Response.error('UHE-LOC-GLS', 'unhandled error', error);
+      return Res.error('UHE-LOC-GLS', 'unhandled error', error);
     }
   }
 
@@ -27,7 +27,7 @@ export class LoansController {
     try {
       return this.loanService.getLoanByLoanId(getLoanByIdDto.loan_id);
     } catch (error) {
-      return Response.error('UHE-LOC-GLBID', 'unhandled error', error);
+      return Res.error('UHE-LOC-GLBID', 'unhandled error', error);
     }
   }
 
@@ -36,7 +36,7 @@ export class LoansController {
     try {
       return this.loanService.addNewLoan(addNewLoanDto);
     } catch (error) {
-      return Response.error('UHE-LOC-ANL', 'unhandled error', error);
+      return Res.error('UHE-LOC-ANL', 'unhandled error', error);
     }
   }
 
@@ -49,7 +49,7 @@ export class LoansController {
         addNewCreditCardEmiLoanDto,
       );
     } catch (error) {
-      return Response.error('UHE-LOC-ANCCEL', 'unhandled error', error);
+      return Res.error('UHE-LOC-ANCCEL', 'unhandled error', error);
     }
   }
 
@@ -62,7 +62,7 @@ export class LoansController {
         addNewCreditCardEmiLoanCustomDto,
       );
     } catch (error) {
-      return Response.error('UHE-LOC-ANCCECL', 'unhandled error', error);
+      return Res.error('UHE-LOC-ANCCECL', 'unhandled error', error);
     }
   }
 
@@ -73,7 +73,7 @@ export class LoansController {
     try {
       return this.loanService.deleteLoanByloanId(deleteLoanByLoanIdDto.loan_id);
     } catch (error) {
-      return Response.error('UHE-LOC-DLBLID', 'unhandled error', error);
+      return Res.error('UHE-LOC-DLBLID', 'unhandled error', error);
     }
   }
 }

@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      pre {
+        overflow: scroll;
+        outline: 1px solid #ccc;
+        padding: 5px;
+        margin: 5px;
+      }
+      .string {
+        color: green;
+      }
+      .number {
+        color: darkorange;
+      }
+      .boolean {
+        color: blue;
+      }
+      .null {
+        color: magenta;
+      }
+      .key {
+        color: red;
+      }
+    </style>
+    <title>Authentication</title>
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <script type="text/javascript">
+      function output(inp) {
+        document.body.appendChild(document.createElement('pre')).innerHTML =
+          inp;
+      }
+
+      function syntaxHighlight(json) {
+        json = json
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;');
+        return json.replace(
+          /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g,
+          function (match) {
+            var cls = 'number';
+            if (/^"/.test(match)) {
+              if (/:$/.test(match)) {
+                cls = 'key';
+              } else {
+                cls = 'string';
+              }
+            } else if (/true|false/.test(match)) {
+              cls = 'boolean';
+            } else if (/null/.test(match)) {
+              cls = 'null';
+            }
+            return '<span class="' + cls + '">' + match + '</span>';
+          },
+        );
+      }
+    </script>
+    <script>
+      function callbackForGoogle(response) {
+        console.log(response);
+        if (response.credential) {
+          localStorage.setItem('googleUser', JSON.stringify(response));
+          location.reload();
+        }
+      }
+
+      function copyGoogleTokenToClipboard() {
+        let objString = localStorage.getItem('googleUser');
+        let obj = JSON.parse(objString).credential;
+        let str = JSON.stringify(obj, null, 4);
+        navigator.clipboard.writeText(str);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Generate Authentication Token</h1>
+    <div>
+      <h2>Google</h2>
+
+      <div
+        id="g_id_onload"
+        data-client_id="79299602889-ttpmi9stgu9781e3g33dfdnh9mtbe61i.apps.googleusercontent.com"
+        data-context="use"
+        data-ux_mode="popup"
+        data-callback="callbackForGoogle"
+        data-auto_select="true"
+        data-close_on_tap_outside="false"
+        data-itp_support="true"
+      ></div>
+
+      <div
+        class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="continue_with"
+        data-size="large"
+        data-logo_alignment="left"
+      ></div>
+
+      <div>
+        <h3>Your google token</h3>
+        <p>
+          <script>
+            let objString = localStorage.getItem('googleUser');
+            let obj = JSON.parse(objString);
+            let str = JSON.stringify(obj, null, 4);
+            output(syntaxHighlight(str));
+          </script>
+        </p>
+        <button onclick="copyGoogleTokenToClipboard()">
+          Copy google token
+        </button>
+      </div>
+    </div>
+  </body>
+</html>

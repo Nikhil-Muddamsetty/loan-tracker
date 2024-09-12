@@ -1,5 +1,13 @@
-export class Response {
-  static success(message: string, data: any) {
+export interface Response {
+  success: boolean;
+  message: string;
+  data?: any;
+  error?: any;
+  code?: string;
+}
+
+export class Res {
+  static success(message: string, data: any): Response {
     return {
       success: true,
       message,
@@ -7,7 +15,7 @@ export class Response {
     };
   }
 
-  static error(code: string, message: string, error?: any) {
+  static error(code: string, message: string, error?: any): Response {
     return {
       success: false,
       code,

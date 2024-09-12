@@ -5,7 +5,7 @@ import {
   AddNewCreditCardEmiLoanDto,
   AddNewLoanDto,
 } from './loans.dto';
-import { Response } from 'src/utils/response';
+import { Res } from 'src/utils/response';
 import { RepaymentsService } from 'src/repayments/repayments.service';
 
 @Injectable()
@@ -21,15 +21,15 @@ export class LoansService {
     //     data: { ...addNewLoadDto },
     //   });
     //   if (!loan) {
-    //     return Response.error(
+    //     return Res.error(
     //       'LOS-ANL-1',
     //       'Failed to add new loan to the database',
     //     );
     //   } else {
-    //     return Response.success('Loan added', null);
+    //     return Res.success('Loan added', null);
     //   }
     // } catch (error) {
-    //   return Response.error('UHE-LOS-ANL', 'unhandled error', error);
+    //   return Res.error('UHE-LOS-ANL', 'unhandled error', error);
     // }
   }
 
@@ -43,7 +43,7 @@ export class LoansService {
         );
       return repaymentSchedule;
     } catch (error) {
-      return Response.error('UHE-LOS-ANCCEL', 'unhandled error', error);
+      return Res.error('UHE-LOS-ANCCEL', 'unhandled error', error);
     }
   }
 
@@ -62,62 +62,59 @@ export class LoansService {
       if (generateTransactionPayloadResponse.success === false) {
         return generateTransactionPayloadResponse;
       }
-      const loan = await this.prisma.loans.create({
+      const loan = await this.prisma.loan.create({
         data: {
           ...(generateLoansPayloadResponse?.data ?? {}),
           repayments: { create: generateTransactionPayloadResponse.data },
         },
       });
-      return Response.success('Loan added', loan);
+      return Res.success('Loan added', loan);
     } catch (error) {
       console.log(error);
-      return Response.error('UHE-LOS-ANCCECL', 'unhandled error', error);
+      return Res.error('UHE-LOS-ANCCECL', 'unhandled error', error);
     }
   }
 
   async getLoans() {
     try {
-      const loans = await this.prisma.loans.findMany({});
-      return Response.success('Fetched loans', loans);
+      const loans = await this.prisma.loan.findMany({});
+      return Res.success('Fetched loans', loans);
     } catch (error) {
-      return Response.error('UHE-LOS-GLS', 'unhandled error', error);
+      return Res.error('UHE-LOS-GLS', 'unhandled error', error);
     }
   }
 
   async getLoanByLoanId(loan_id: number) {
     try {
-      const loan = await this.prisma.loans.findFirst({
+      const loan = await this.prisma.loan.findFirst({
         where: { id: loan_id },
       });
       if (!loan) {
-        return Response.error(
+        return Res.error(
           'LOS-GLBID-1',
           'No load with the provided loan_id exists',
         );
       } else {
-        return Response.success('Fetched loan', loan);
+        return Res.success('Fetched loan', loan);
       }
     } catch (error) {
-      return Response.error('UHE-LOS-GLBLID', 'unhandled error', error);
+      return Res.error('UHE-LOS-GLBLID', 'unhandled error', error);
     }
   }
 
   async deleteLoanByloanId(loan_id: number) {
     try {
-      const loan = await this.prisma.loans.update({
+      const loan = await this.prisma.loan.update({
         where: { id: loan_id },
         data: { mark_for_deletion: true },
       });
       if (!loan) {
-        return Response.error(
-          'LOS-DL-1',
-          'Failed to delete loan from the database',
-        );
+        return Res.error('LOS-DL-1', 'Failed to delete loan from the database');
       } else {
-        return Response.success('Loan deleted', null);
+        return Res.success('Loan deleted', null);
       }
     } catch (error) {
-      return Response.error('UHE-LOS-DLBLID', 'unhandled error', error);
+      return Res.error('UHE-LOS-DLBLID', 'unhandled error', error);
     }
   }
 
@@ -148,9 +145,9 @@ export class LoansService {
               ),
           };
         });
-      return Response.success('Transaction payload generated', repaymentList);
+      return Res.success('Transaction payload generated', repaymentList);
     } catch (error) {
-      return Response.error('UHE-LOS-GTP', 'unhandled error', error);
+      return Res.error('UHE-LOS-GTP', 'unhandled error', error);
     }
   }
 
@@ -177,9 +174,9 @@ export class LoansService {
         loans['borrower_phone'] =
           addNewCreditCardEmiLoanCustomDto.borrower_phone;
       }
-      return Response.success('Loans payload generated', loans);
+      return Res.success('Loans payload generated', loans);
     } catch (error) {
-      return Response.error('UHE-LOS-GLP', 'unhandled error', error);
+      return Res.error('UHE-LOS-GLP', 'unhandled error', error);
     }
   }
 }

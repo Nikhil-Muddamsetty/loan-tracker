@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { AddNewCreditCardEmiLoanDto } from 'src/loans/loans.dto';
-import { Response } from 'src/utils/response';
+import { Res } from 'src/utils/response';
 
 @Injectable()
 export class RepaymentsService {
@@ -49,12 +49,12 @@ export class RepaymentsService {
         repaymentSchedule.push(repayment);
         remainingAmount -= principal;
       }
-      return Response.success('Repayment schedule generated', {
+      return Res.success('Repayment schedule generated', {
         totalPayment: parseFloat((emiAmount * numberOfRepayments).toFixed(2)),
         repaymentSchedule,
       });
     } catch (error) {
-      return Response.error('UHE-RES-GRS', 'unhandled error', error);
+      return Res.error('UHE-RES-GRS', 'unhandled error', error);
     }
   }
 
