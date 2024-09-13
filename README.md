@@ -11,11 +11,22 @@
 
 The Loan Tracker is an application designed to help you keep track of all the money you have lent to your friends and family, or vice versa. It provides a convenient way to record and manage your loans, ensuring that you never lose track of who owes you money or who you owe money to. With the Loan Tracker, you can easily view and update your loan transactions, set reminders for repayment, and maintain a clear overview of your financial interactions. Stay organized and never let a loan slip through the cracks with the Loan Tracker.
 
-## Framework & Library
+## Tech Stack
+
+1 Runtime
 
 - Node JS
+
+2 Famework
+
 - Nest JS
--
+
+3 Libraries & Packages
+
+- Prisma
+- bullmq
+- postgres & pg
+- google-auth-library
 
 ## Project setup
 
